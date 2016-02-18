@@ -25,10 +25,10 @@
  * vec3 position
  * float confidence
  *
- * float color (encoded as a 24-bit integer)
- * float <unused>
- * float initTime
- * float timestamp
+ * uint color RG (channels encoded as a 16-bit integers)
+ * uint color B_
+ * uint initTime
+ * uint timestamp
  *
  * vec3 normal
  * float radius
@@ -37,4 +37,4 @@
  * Which is three vec4s
  */
 
-const int Vertex::SIZE = sizeof(Eigen::Vector4f) * 3;
+const int Vertex::SIZE = sizeof(Eigen::Vector4f) * 2 + sizeof(Eigen::Vector4i);

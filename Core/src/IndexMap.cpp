@@ -100,7 +100,7 @@ IndexMap::IndexMap()
   infoRenderBuffer(Resolution::getInstance().width(), Resolution::getInstance().height()),
   colorInfoTexture(Resolution::getInstance().width() * IndexMap::FACTOR,
                    Resolution::getInstance().height() * IndexMap::FACTOR,
-                   GL_RGBA32F, GL_LUMINANCE, GL_FLOAT),
+                   GL_RGBA32UI, GL_LUMINANCE_INTEGER_EXT, GL_UNSIGNED_INT),
   vertexInfoTexture(Resolution::getInstance().width() * IndexMap::FACTOR,
                    Resolution::getInstance().height() * IndexMap::FACTOR,
                    GL_RGBA32F, GL_LUMINANCE, GL_FLOAT),
@@ -182,10 +182,10 @@ void IndexMap::predictIndices(const Eigen::Matrix4f & pose,
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, 0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f)));
+    glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f)));
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 2));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) + sizeof(Eigen::Vector4i)));
 
     glDrawTransformFeedback(GL_POINTS, model.second);
 
@@ -306,10 +306,10 @@ void IndexMap::combinedPredict(const Eigen::Matrix4f & pose,
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, 0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
+    glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 2));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) + sizeof(Eigen::Vector4i)));
 
     glDrawTransformFeedback(GL_POINTS, model.second);
 
@@ -387,10 +387,10 @@ void IndexMap::synthesizeDepth(const Eigen::Matrix4f & pose,
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, 0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
+    glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 2));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) + sizeof(Eigen::Vector4i)));
 
     glDrawTransformFeedback(GL_POINTS, model.second);
 
@@ -454,10 +454,10 @@ void IndexMap::synthesizeInfo(const Eigen::Matrix4f & pose,
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, 0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
+    glVertexAttribIPointer(1, 4, GL_UNSIGNED_INT, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 1));
 
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) * 2));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, Vertex::SIZE, reinterpret_cast<GLvoid*>(sizeof(Eigen::Vector4f) + sizeof(Eigen::Vector4i)));
 
     glDrawTransformFeedback(GL_POINTS, model.second);
 

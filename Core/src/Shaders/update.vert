@@ -19,17 +19,17 @@
 #version 430 core
 
 layout (location = 0) in vec4 vPosition;
-layout (location = 1) in vec4 vColor;
+layout (location = 1) in uvec4 vColor;
 layout (location = 2) in vec4 vNormRad;
 
 out vec4 vPosition0;
-out vec4 vColor0;
+flat out uvec4 vColor0;
 out vec4 vNormRad0;
 uniform float texDim;
 uniform int time;
 
 uniform sampler2D vertSamp;
-uniform sampler2D colorSamp;
+uniform usampler2D colorSamp;
 uniform sampler2D normSamp;
 
 #include "color.glsl"
@@ -43,7 +43,7 @@ void main()
     float y = (float(intY) / texDim) + halfPixel;
     float x = (float(intX) / texDim) + halfPixel;
     
-    vec4 newColor = textureLod(colorSamp, vec2(x, y), 0);
+    uvec4 newColor = textureLod(colorSamp, vec2(x, y), 0);
 
     //Do averaging here
     if(newColor.w == -1)
@@ -61,12 +61,12 @@ void main()
         {
 	        vPosition0 = vec4(((c_k * v_k) + (a * v_g)) / (c_k + a), c_k + a);
 	        
-	        vec3 oldCol = decodeColor(vColor.x);
-	        vec3 newCol = decodeColor(newColor.x);
+	        vec3 oldCol = decodeColor(vColor.xy);
+	        vec3 newCol = decodeColor(newColor.xy);
            
             vec3 avgColor = ((c_k * oldCol.xyz) + (a * newCol.xyz)) / (c_k + a);
             
-	        vColor0 = vec4(encodeColor(avgColor), vColor.y, vColor.z, time);
+	        vColor0 = uvec4(encodeColor(avgColor), vColor.z, time);
 	        
 	        vNormRad0 = ((c_k * vNormRad) + (a * newNorm)) / (c_k + a);
 	        

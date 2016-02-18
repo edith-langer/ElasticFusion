@@ -21,7 +21,7 @@
 layout (location = 0) in vec2 texcoord;
 
 out vec4 vPosition;
-out vec4 vColor;
+flat out uvec4 vColor;
 out vec4 vNormRad;
 flat out int updateId;
 
@@ -30,7 +30,7 @@ uniform sampler2D drSampler;
 uniform sampler2D drfSampler;
 uniform usampler2D indexSampler;
 uniform sampler2D vertConfSampler;
-uniform sampler2D colorTimeSampler;
+uniform usampler2D colorTimeSampler;
 uniform sampler2D normRadSampler;
 
 uniform vec4 cam; //cx, cy, 1/fx, 1/fy
@@ -87,11 +87,10 @@ void main()
     vec3 vPosition_f = getVertex(texcoord.xy, x, y, cam, drfSampler);
     
     //Color for color, obviously
-    vColor = textureLod(cSampler, texcoord.xy, 0.0);
+    vec4 inColor = textureLod(cSampler, texcoord.xy, 0.0);
     
-    vColor.x = encodeColor(vColor.xyz);
-    vColor.y = 0;
-    vColor.z = time;
+    vColor.xy = encodeColor(inColor.xyz);
+    vColor.z = uint(time);
     
     //Normal and radius computed with filtered position / depth map transformed to global coords
     vec3 vNormLocal = getNormal(vPosition_f, texcoord.xy, x, y, cam, drfSampler);

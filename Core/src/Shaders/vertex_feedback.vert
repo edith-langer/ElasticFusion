@@ -21,7 +21,7 @@
 layout (location = 0) in vec2 texcoord;
 
 out vec4 vPosition;
-out vec4 vColor;
+flat out uvec4 vColor;
 out vec4 vNormRad;
 out float zVal;
 
@@ -44,7 +44,7 @@ void main()
     float y = texcoord.y * rows;
 
     vPosition = vec4(getVertex(texcoord.xy, x, y, cam, gSampler), 1);
-    vColor = textureLod(cSampler, texcoord.xy, 0.0);
+    vec4 inColor = textureLod(cSampler, texcoord.xy, 0.0);
     
     vec3 vNormLocal = getNormal(vPosition.xyz, texcoord.xy, x, y, cam, gSampler);
     vNormRad = vec4(vNormLocal, getRadius(vPosition.z, vNormLocal.z));
@@ -60,9 +60,7 @@ void main()
     
     vPosition.w = confidence(x, y, 1.0f);
     
-    vColor.x = encodeColor(vColor.xyz);
-    
-    vColor.y = 0;
-    //Timestamp
-    vColor.w = float(time);
+    vColor.xy = encodeColor(inColor.xyz);
+    vColor.z = time; // In original code was not explicitly initialized
+    vColor.w = time;
 }

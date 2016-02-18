@@ -19,7 +19,7 @@
 #version 430 core
 
 layout (location = 0) in vec4 position;
-layout (location = 1) in vec4 color;
+layout (location = 1) in uvec4 color;
 layout (location = 2) in vec4 normal;
 
 uniform mat4 MVP;
@@ -41,7 +41,7 @@ void main()
         }
         else if(colorType == 2)
         {
-            vColor = vec4(decodeColor(color.x), 1.0);
+            vColor = vec4(decodeColor(color.xy), 1.0);
         }
         else
         {

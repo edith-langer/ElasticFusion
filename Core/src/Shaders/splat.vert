@@ -19,7 +19,7 @@
 #version 430 core
 
 layout (location = 0) in vec4 vPosition;
-layout (location = 1) in vec4 vColor;
+layout (location = 1) in uvec4 vColor;
 layout (location = 2) in vec4 vNormRad;
 
 uniform mat4 t_inv;
@@ -34,7 +34,7 @@ uniform int timeDelta;
 
 out vec4 position;
 out vec4 normRad;
-out vec4 colTime;
+flat out uvec4 colTime;
 
 vec3 projectPoint(vec3 p)
 {
@@ -54,7 +54,7 @@ void main()
 {
     vec4 vPosHome = t_inv * vec4(vPosition.xyz, 1.0);
     
-    if(vPosHome.z > maxDepth || vPosHome.z < 0 || vPosition.w < confThreshold || time - vColor.w > timeDelta || vColor.w > maxTime)
+    if(vPosHome.z > maxDepth || vPosHome.z < 0 || vPosition.w < confThreshold || time - int(vColor.w) > timeDelta || int(vColor.w) > maxTime)
     {
         gl_Position = vec4(1000.0f, 1000.0f, 1000.0f, 1000.0f);
         gl_PointSize = 0;
