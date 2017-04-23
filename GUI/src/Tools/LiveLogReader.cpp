@@ -135,3 +135,24 @@ void LiveLogReader::setAuto(bool value)
     cam->setAutoExposure(value);
     cam->setAutoWhiteBalance(value);
 }
+
+void LiveLogReader::setExposureTime(float exposure_time)
+{
+  cam->setExposureTime(exposure_time);
+}
+
+void LiveLogReader::setGain(int gain)
+{
+  cam->setGain(gain);
+}
+
+float LiveLogReader::getExposureTime()
+{
+  return cam->getExposureTime();
+}
+
+int LiveLogReader::getGain()
+{
+  return cam->getGain();
+}
+

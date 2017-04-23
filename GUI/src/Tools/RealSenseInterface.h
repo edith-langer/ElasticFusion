@@ -22,15 +22,19 @@ public:
 
   bool getAutoExposure();
   bool getAutoWhiteBalance();
-  virtual void setAutoExposure(bool value);
-  virtual void setAutoWhiteBalance(bool value);
+  virtual void setAutoExposure(bool value) override;
+  virtual void setAutoWhiteBalance(bool value) override;
+  virtual void setExposureTime(float exposure_time) override;
+  virtual void setGain(int gain) override;
+  virtual float getExposureTime() override;
+  virtual int getGain() override;
 
-  virtual bool ok()
+  virtual bool ok() override
   {
     return initSuccessful;
   }
 
-  virtual std::string error()
+  virtual std::string error() override
   {
     return errorText;
   }

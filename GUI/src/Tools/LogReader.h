@@ -73,6 +73,14 @@ class LogReader
 
         virtual void setAuto(bool value) = 0;
 
+        virtual void setExposureTime(float exposure_time) = 0;
+
+        virtual void setGain(int gain) = 0;
+
+        virtual float getExposureTime() = 0;
+
+        virtual int getGain() = 0;
+
         bool flipColors;
         int64_t timestamp;
 

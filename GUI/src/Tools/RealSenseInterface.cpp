@@ -87,6 +87,16 @@ void RealSenseInterface::setAutoWhiteBalance(bool value)
   dev->set_option(rs::option::color_enable_auto_white_balance,value);
 }
 
+void RealSenseInterface::setExposureTime(float exposure_time)
+{
+  dev->set_opition(rs::option::color_exposure, exposure_time * 10);
+}
+
+void RealSenseInterface::setGain(int gain)
+{
+  dev->set_opition(rs::option::color_gain, gain);
+}
+
 bool RealSenseInterface::getAutoExposure()
 {
   return dev->get_option(rs::option::color_enable_auto_exposure);
@@ -96,6 +106,17 @@ bool RealSenseInterface::getAutoWhiteBalance()
 {
   return dev->get_option(rs::option::color_enable_auto_white_balance);
 }
+
+float RealSenseInterface::getExposureTime()
+{
+  dev->get_opition(rs::option::color_exposure) / 10.0;
+}
+
+int RealSenseInterface::getGain()
+{
+  dev->get_opition(rs::option::color_gain);
+}
+
 #else
 
 RealSenseInterface::RealSenseInterface(int inWidth,int inHeight,int inFps)
@@ -119,6 +140,14 @@ void RealSenseInterface::setAutoWhiteBalance(bool value)
 {
 }
 
+void RealSenseInterface::setExposureTime(float exposure_time)
+{
+}
+
+void RealSenseInterface::setGain(int gain)
+{
+}
+
 bool RealSenseInterface::getAutoExposure()
 {
   return false;
@@ -128,4 +157,15 @@ bool RealSenseInterface::getAutoWhiteBalance()
 {
   return false;
 }
+
+float RealSenseInterface::getExposureTime()
+{
+  return 1.0f;
+}
+
+int RealSenseInterface::getGain()
+{
+  return 1;
+}
+
 #endif

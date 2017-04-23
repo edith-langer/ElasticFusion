@@ -289,6 +289,16 @@ void OpenNI2Interface::setAutoWhiteBalance(bool value)
     rgbStream.getCameraSettings()->setAutoWhiteBalanceEnabled(value);
 }
 
+void OpenNI2Interface::setExposureTime(float exposure_time)
+{
+    rgbStream.getCameraSettings()->setExposure(exposure_time);
+}
+
+void OpenNI2Interface::setGain(int gain)
+{
+    rgbStream.getCameraSettings()->setGain(gain);
+}
+
 bool OpenNI2Interface::getAutoExposure()
 {
     return rgbStream.getCameraSettings()->getAutoExposureEnabled();
@@ -298,3 +308,14 @@ bool OpenNI2Interface::getAutoWhiteBalance()
 {
     return rgbStream.getCameraSettings()->getAutoWhiteBalanceEnabled();
 }
+
+float OpenNI2Interface::getExposureTime()
+{
+    return rgbStream.getCameraSettings()->getExposure();
+}
+
+int OpenNI2Interface::getGain()
+{
+    return rgbStream.getCameraSettings()->getGain();
+}
+

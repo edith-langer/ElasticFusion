@@ -189,3 +189,24 @@ void RawLogReader::setAuto(bool value)
 {
 
 }
+
+void RawLogReader::setExposureTime(float exposure_time)
+{
+
+}
+
+void RawLogReader::setGain(int gain)
+{
+
+}
+
+float RawLogReader::getExposureTime()
+{
+  return 1.0;
+}
+
+int RawLogReader::getGain()
+{
+  return 1;
+}
+

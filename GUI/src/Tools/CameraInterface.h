@@ -21,4 +21,8 @@ class CameraInterface
 
       virtual void setAutoExposure(bool value) = 0;
       virtual void setAutoWhiteBalance(bool value) = 0;
+      virtual void setExposureTime(float exposure_time) = 0;
+      virtual void setGain(int gain) = 0;
+      virtual float getExposureTime() = 0;
+      virtual int getGain() = 0;
 };

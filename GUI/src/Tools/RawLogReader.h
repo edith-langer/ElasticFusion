@@ -39,23 +39,31 @@ class RawLogReader : public LogReader
 
         virtual ~RawLogReader();
 
-        void getNext();
+        void getNext() override;
 
-        void getBack();
+        void getBack() override;
 
-        int getNumFrames();
+        int getNumFrames() override;
 
-        bool hasMore();
+        bool hasMore() override;
 
-        bool rewound();
+        bool rewound() override;
 
-        void rewind();
+        void rewind() override;
 
-        void fastForward(int frame);
+        void fastForward(int frame) override;
 
-        const std::string getFile();
+        const std::string getFile() override;
 
-        void setAuto(bool value);
+        void setAuto(bool value) override;
+
+        virtual void setExposureTime(float exposure_time) override;
+
+        virtual void setGain(int gain) override;
+
+        virtual float getExposureTime() override;
+
+        virtual int getGain() override;
 
         std::stack<int> filePointers;
 
