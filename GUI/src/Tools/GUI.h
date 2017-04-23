@@ -127,6 +127,7 @@ class GUI
             icpWeight = new pangolin::Var<float>("ui.ICP weight", 10.0, 0.0, 100.0);
             cameraGain = new pangolin::Var<int>("ui.Camera gain", 200, 100, 1587);
             cameraExposure = new pangolin::Var<float>("ui.Camera exposure", 20.0, 1.0, 50.0);
+            renderExposure = new pangolin::Var<float>("ui.Render exposure", 20.0, 1.0, 50.0);
             followPose = new pangolin::Var<bool>("ui.Follow pose", true, true);
             drawRawCloud = new pangolin::Var<bool>("ui.Draw raw", false, true);
             drawFilteredCloud = new pangolin::Var<bool>("ui.Draw filtered", false, true);
@@ -184,6 +185,7 @@ class GUI
             delete icpWeight;
             delete cameraExposure;
             delete cameraGain;
+            delete renderExposure;
             delete pyramid;
             delete rgbOnly;
             delete totalFernDefs;
@@ -403,7 +405,8 @@ class GUI
         pangolin::Var<float> * confidenceThreshold,
                              * depthCutoff,
                              * icpWeight,
-                             * cameraExposure;
+                             * cameraExposure,
+                             * renderExposure;
         pangolin::Var<int> * cameraGain;
 
         pangolin::DataLog resLog, inLog;

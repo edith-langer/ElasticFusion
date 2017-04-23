@@ -140,13 +140,15 @@ void FeedbackBuffer::compute(pangolin::GlTexture * color,
 void FeedbackBuffer::render(pangolin::OpenGlMatrix mvp,
                             const Eigen::Matrix4f & pose,
                             const bool drawNormals,
-                            const bool drawColors)
+                            const bool drawColors,
+                            const float exposureTime)
 {
     drawProgram->Bind();
 
     drawProgram->setUniform(Uniform("MVP", mvp));
     drawProgram->setUniform(Uniform("pose", pose));
     drawProgram->setUniform(Uniform("colorType", (drawNormals ? 1 : drawColors ? 2 : 0)));
+    drawProgram->setUniform(Uniform("exposureTime", exposureTime));
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 

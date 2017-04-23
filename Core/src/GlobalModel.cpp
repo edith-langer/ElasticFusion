@@ -256,7 +256,8 @@ void GlobalModel::renderPointCloud(pangolin::OpenGlMatrix mvp,
                                    const bool drawWindow,
                                    const bool drawTimes,
                                    const int time,
-                                   const int timeDelta)
+                                   const int timeDelta,
+                                   const float exposure)
 {
     std::shared_ptr<Shader> program = drawPoints ? drawProgram : drawSurfelProgram;
 
@@ -275,6 +276,8 @@ void GlobalModel::renderPointCloud(pangolin::OpenGlMatrix mvp,
     program->setUniform(Uniform("time", time));
 
     program->setUniform(Uniform("timeDelta", timeDelta));
+
+    program->setUniform(Uniform("exposure", exposure));
 
     Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
     //This is for the point shader

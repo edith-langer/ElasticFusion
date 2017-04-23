@@ -55,7 +55,8 @@ class GlobalModel
                               const bool drawWindow,
                               const bool drawTimes,
                               const int time,
-                              const int timeDelta);
+                              const int timeDelta,
+                              const float exposure);
 
         EFUSION_API const std::pair<GLuint, GLuint> & model();
 

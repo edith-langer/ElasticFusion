@@ -22,15 +22,23 @@ in vec3 vColor0;
 in vec2 texcoord;
 in float radius;
 flat in int unstablePoint;
+flat in int tonemap;
+
+uniform float exposure;
 
 out vec4 FragColor;
+
+#include "tonemap.glsl"
 
 void main()
 {
     if(dot(texcoord, texcoord) > 1.0)
         discard;
         
-    FragColor = vec4(vColor0, 1.0f);
+    if(tonemap == 1)
+      FragColor = vec4(gamma(tonemapping(vColor0 * exposure)), 1.0f);
+    else
+      FragColor = vec4(vColor0, 1.0f);
     
     if(unstablePoint == 1)
 	{

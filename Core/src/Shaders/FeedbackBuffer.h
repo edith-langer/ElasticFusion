@@ -42,7 +42,7 @@ class FeedbackBuffer
                      const int & time,
                      const float depthCutoff);
 
-        EFUSION_API void render(pangolin::OpenGlMatrix mvp, const Eigen::Matrix4f & pose, const bool drawNormals, const bool drawColors);
+        EFUSION_API void render(pangolin::OpenGlMatrix mvp, const Eigen::Matrix4f & pose, const bool drawNormals, const bool drawColors, const float exposureTime);
 
         EFUSION_API static const std::string RAW, FILTERED;
 

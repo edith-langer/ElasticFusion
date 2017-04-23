@@ -28,6 +28,7 @@ uniform float threshold;
 uniform int colorType;
 
 out vec4 vColor;
+flat out int tonemap;
 
 #include "color.glsl"
 
@@ -35,6 +36,8 @@ void main()
 {
     if(position.w > threshold)
     {
+        tonemap = 0;
+
         if(colorType == 1)
         {
             vColor = vec4(normal.xyz, 1.0);
@@ -42,6 +45,7 @@ void main()
         else if(colorType == 2)
         {
             vColor = vec4(decodeColor(color.xy), 1.0);
+              tonemap = 1;
         }
         else
         {

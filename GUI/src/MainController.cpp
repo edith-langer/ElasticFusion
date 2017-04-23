@@ -356,12 +356,12 @@ void MainController::run()
 
         if(gui->drawRawCloud->Get())
         {
-            eFusion->getFeedbackBuffers().at(FeedbackBuffer::RAW)->render(gui->s_cam.GetProjectionModelViewMatrix(), pose, gui->drawNormals->Get(), gui->drawColors->Get());
+            eFusion->getFeedbackBuffers().at(FeedbackBuffer::RAW)->render(gui->s_cam.GetProjectionModelViewMatrix(), pose, gui->drawNormals->Get(), gui->drawColors->Get(), gui->renderExposure->Get());
         }
 
         if(gui->drawFilteredCloud->Get())
         {
-            eFusion->getFeedbackBuffers().at(FeedbackBuffer::FILTERED)->render(gui->s_cam.GetProjectionModelViewMatrix(), pose, gui->drawNormals->Get(), gui->drawColors->Get());
+            eFusion->getFeedbackBuffers().at(FeedbackBuffer::FILTERED)->render(gui->s_cam.GetProjectionModelViewMatrix(), pose, gui->drawNormals->Get(), gui->drawColors->Get(), gui->renderExposure->Get());
         }
 
         if(gui->drawGlobalModel->Get())
@@ -390,7 +390,8 @@ void MainController::run()
                                                            gui->drawWindow->Get(),
                                                            gui->drawTimes->Get(),
                                                            eFusion->getTick(),
-                                                           eFusion->getTimeDelta());
+                                                           eFusion->getTimeDelta(),
+                                                           gui->renderExposure->Get());
             }
             glFinish();
             TOCK("Global");

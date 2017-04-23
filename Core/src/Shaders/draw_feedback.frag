@@ -19,10 +19,18 @@
 #version 430 core
 
 in vec4 vColor;
+flat in int tonemap;
+
+uniform float exposureTime;
 
 out vec4 FragColor;
 
+#include "tonemap.glsl"
+
 void main()
 {
-    FragColor = vColor;
+    if(tonemap == 1)
+      FragColor = vec4(gamma(tonemapping(vColor.xyz * exposureTime)), 1.0f);
+    else
+      FragColor = vColor;
 }

@@ -39,6 +39,7 @@ out vec3 n;
 out vec2 texcoord;
 out float radius;
 flat out int unstablePoint;
+flat out int tonemap;
 
 #include "color.glsl"
 
@@ -46,6 +47,8 @@ void main()
 {
     if(colorType0[0] != -1)
     {
+        tonemap = 0;
+
         if(colorType0[0] == 1)
         {
             vColor0 = vNormRad[0].xyz;
@@ -53,6 +56,7 @@ void main()
         else if(colorType0[0] == 2)
         {
             vColor0 = decodeColor(vColor[0].xy);
+              tonemap = 1;
         }
         else if(colorType0[0] == 3)
         {
