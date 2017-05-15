@@ -150,8 +150,8 @@ OpenNI2Interface::OpenNI2Interface(int inWidth, int inHeight, int fps)
                 device.setDepthColorSyncEnabled(true);
                 device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
 
-                setAutoExposure(true);
-                setAutoWhiteBalance(true);
+                setAutoExposure(false);
+                setAutoWhiteBalance(false);
 
                 rgbStream.addNewFrameListener(rgbCallback);
                 depthStream.addNewFrameListener(depthCallback);

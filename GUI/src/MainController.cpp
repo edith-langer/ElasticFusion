@@ -543,17 +543,6 @@ void MainController::run()
 
         resetButton = pangolin::Pushed(*gui->reset);
 
-        if(gui->autoSettings)
-        {
-            static bool last = gui->autoSettings->Get();
-
-            if(gui->autoSettings->Get() != last)
-            {
-                last = gui->autoSettings->Get();
-                static_cast<LiveLogReader *>(logReader)->setAuto(last);
-            }
-        }
-
         Stopwatch::getInstance().sendAll();
 
         if(resetButton)

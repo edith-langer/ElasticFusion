@@ -117,15 +117,6 @@ class GUI
             reset = new pangolin::Var<bool>("ui.Reset", false, false);
             flipColors = new pangolin::Var<bool>("ui.Flip RGB", false, true);
 
-            if(liveCap)
-            {
-                autoSettings = new pangolin::Var<bool>("ui.Auto Settings", true, true);
-            }
-            else
-            {
-                autoSettings = 0;
-            }
-
             pyramid = new pangolin::Var<bool>("ui.Pyramid", true, true);
             so3 = new pangolin::Var<bool>("ui.SO(3)", true, true);
             frameToFrameRGB = new pangolin::Var<bool>("ui.Frame to frame RGB", false, true);
@@ -175,12 +166,6 @@ class GUI
             delete reset;
             delete inPlot;
             delete resPlot;
-
-            if(autoSettings)
-            {
-                delete autoSettings;
-
-            }
             delete step;
             delete save;
             delete trackInliers;
@@ -396,7 +381,6 @@ class GUI
                             * drawRawCloud,
                             * drawFilteredCloud,
                             * drawNormals,
-                            * autoSettings,
                             * drawDefGraph,
                             * drawColors,
                             * drawFxaa,
