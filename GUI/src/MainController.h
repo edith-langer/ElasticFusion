@@ -61,7 +61,8 @@ class MainController
         int timeDelta,
             icpCountThresh,
             start,
-            end;
+            end,
+            gain;
 
         bool fillIn,
              openLoop,

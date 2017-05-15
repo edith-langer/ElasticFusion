@@ -81,6 +81,7 @@ MainController::MainController(int argc, char * argv[])
     covThresh = 1e-05;
     photoThresh = 115;
     fernThresh = 0.3095f;
+    gain = 200;
 
     timeDelta = 200;
     icpCountThresh = 40000;
@@ -99,6 +100,7 @@ MainController::MainController(int argc, char * argv[])
     Parse::get().arg(argc, argv, "-ic", icpCountThresh);
     Parse::get().arg(argc, argv, "-s", start);
     Parse::get().arg(argc, argv, "-e", end);
+    Parse::get().arg(argc, argv, "-gain", gain);
 
     logReader->flipColors = Parse::get().arg(argc, argv, "-f", empty) > -1;
 
@@ -121,6 +123,7 @@ MainController::MainController(int argc, char * argv[])
     gui->icpWeight->Ref().Set(icp);
     gui->so3->Ref().Set(so3);
     gui->frameToFrameRGB->Ref().Set(frameToFrameRGB);
+    gui->cameraGain->Ref().Set(gain);
 
     resizeStream = new Resize(Resolution::getInstance().width(),
                               Resolution::getInstance().height(),
@@ -526,6 +529,8 @@ void MainController::run()
 
         gui->postCall();
 
+        logReader->setExposureTime(gui->cameraExposure->Get());
+        logReader->setGain(gui->cameraGain->Get());
         logReader->flipColors = gui->flipColors->Get();
         eFusion->setRgbOnly(gui->rgbOnly->Get());
         eFusion->setPyramid(gui->pyramid->Get());
