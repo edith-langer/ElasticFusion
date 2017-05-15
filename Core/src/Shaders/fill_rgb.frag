@@ -16,7 +16,7 @@
  *
  */
 
-#version 330 core
+#version 430 core
 
 in vec2 texcoord;
 
@@ -28,10 +28,10 @@ uniform int passthrough;
 
 void main()
 {
-    vec4 sample = texture2D(eSampler, texcoord.xy);
+    vec4 s = texture2D(eSampler, texcoord.xy);
     
-    if(sample.x + sample.y + sample.z == 0 || passthrough == 1)
+    if(s.x + s.y + s.z == 0 || passthrough == 1)
         FragColor = texture2D(rSampler, texcoord.xy);
     else
-        FragColor = sample;
+        FragColor = s;
 }

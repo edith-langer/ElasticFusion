@@ -16,7 +16,7 @@
  *
  */
 
-#version 330 core
+#version 430 core
 
 #define FXAA_REDUCE_MIN   (1.0/ 128.0)
 #define FXAA_REDUCE_MUL   (1.0 / 8.0)

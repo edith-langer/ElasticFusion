@@ -16,7 +16,7 @@
  *
  */
 
-#version 330 core
+#version 430 core
 
 in vec4 vPosition0;
 in vec4 vColor0;

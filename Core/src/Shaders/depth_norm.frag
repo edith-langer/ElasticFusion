@@ -16,7 +16,7 @@
  *
  */
  
-#version 330 core
+#version 430 core
 
 in vec2 texcoord;
 
