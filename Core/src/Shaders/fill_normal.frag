@@ -16,7 +16,7 @@
  *
  */
 
-#version 330 core
+#version 430 core
 
 in vec2 texcoord;
 
@@ -36,15 +36,15 @@ void main()
     float halfPixX = 0.5 * (1.0 / cols);
     float halfPixY = 0.5 * (1.0 / rows);
     
-     vec4 sample = textureLod(eSampler, texcoord, 0.0);
+     vec4 s = textureLod(eSampler, texcoord, 0.0);
     
-    if(sample.z == 0 || passthrough == 1)
+    if(s.z == 0 || passthrough == 1)
     {
 	    vec4 vPos = vec4(getVertex(texcoord, int(texcoord.x * cols), int(texcoord.y * rows), cam, rSampler), 1);
         FragColor = vec4(getNormal(vPos.xyz, texcoord, int(texcoord.x * cols), int(texcoord.y * rows), cam, rSampler), 1);
     }
     else
     {
-        FragColor = sample;
+        FragColor = s;
     }
 }

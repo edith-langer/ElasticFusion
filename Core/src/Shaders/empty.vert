@@ -16,7 +16,7 @@
  *
  */
 
-#version 330
+#version 430
 
 void main()
 { 

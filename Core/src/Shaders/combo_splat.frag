@@ -16,7 +16,7 @@
  *
  */
 
-#version 330 core
+#version 430 core
 
 uniform vec4 cam; //cx, cy, fx, fy
 uniform float maxDepth;
