@@ -23,13 +23,22 @@ const std::string ComputePack::FILTER = "FILTER";
 const std::string ComputePack::METRIC = "METRIC";
 const std::string ComputePack::METRIC_FILTERED = "METRIC_FILTERED";
 
-ComputePack::ComputePack(std::shared_ptr<Shader> program,
-                         pangolin::GlTexture * target)
+ComputePack::ComputePack(std::shared_ptr<Shader> program, pangolin::GlTexture * target)
+ : program(program),
+   renderBuffer(Resolution::getInstance().width(), Resolution::getInstance().height())
+{
+    targets.push_back(target);
+    frameBuffer.AttachColour(*target);
+    frameBuffer.AttachDepth(renderBuffer);
+}
+
+ComputePack::ComputePack(std::shared_ptr<Shader> program, const std::vector<pangolin::GlTexture*>& targets)
  : program(program),
    renderBuffer(Resolution::getInstance().width(), Resolution::getInstance().height()),
-   target(target)
+   targets(targets)
 {
-    frameBuffer.AttachColour(*target);
+    for (size_t i = 0; i < targets.size(); ++i)
+        frameBuffer.AttachColour(*targets[i]);
     frameBuffer.AttachDepth(renderBuffer);
 }
 
@@ -40,7 +49,18 @@ ComputePack::~ComputePack()
 
 void ComputePack::compute(pangolin::GlTexture * input, const std::vector<Uniform> * const uniforms)
 {
-    input->Bind();
+    std::vector<pangolin::GlTexture*> inputs;
+    inputs.push_back(input);
+    compute(inputs, uniforms);
+}
+
+void ComputePack::compute(const std::vector<pangolin::GlTexture*>& inputs, const std::vector<Uniform> * const uniforms)
+{
+    for (size_t i = 0; i < inputs.size(); ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        inputs[i]->Bind();
+    }
 
     frameBuffer.Bind();
 
@@ -71,3 +91,4 @@ void ComputePack::compute(pangolin::GlTexture * input, const std::vector<Uniform
 
     glFinish();
 }
+

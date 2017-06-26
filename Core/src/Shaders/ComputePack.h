@@ -19,6 +19,7 @@
 #ifndef COMPUTEPACK_H_
 #define COMPUTEPACK_H_
 
+#include <vector>
 #include "Shaders.h"
 #include "../Utils/Resolution.h"
 #include "Uniform.h"
@@ -30,16 +31,20 @@ class ComputePack
         ComputePack(std::shared_ptr<Shader> program,
                     pangolin::GlTexture * target);
 
+        ComputePack(std::shared_ptr<Shader> program, const std::vector<pangolin::GlTexture*>& targets);
+
         virtual ~ComputePack();
 
         static const std::string NORM, FILTER, METRIC, METRIC_FILTERED;
 
         void compute(pangolin::GlTexture * input, const std::vector<Uniform> * const uniforms = 0);
 
+        void compute(const std::vector<pangolin::GlTexture*>& inputs, const std::vector<Uniform> * const uniforms = 0);
+
     private:
         std::shared_ptr<Shader> program;
         pangolin::GlRenderBuffer renderBuffer;
-        pangolin::GlTexture * target;
+        std::vector<pangolin::GlTexture*> targets;
         pangolin::GlFramebuffer frameBuffer;
 };
 
