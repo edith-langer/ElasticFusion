@@ -39,6 +39,8 @@ class GPUTexture
 
         virtual ~GPUTexture();
 
+        float computeAverage();
+
         EFUSION_API static const std::string RGB, DEPTH_RAW, DEPTH_FILTERED, DEPTH_METRIC, DEPTH_METRIC_FILTERED, DEPTH_NORM;
 
         pangolin::GlTexture * texture;

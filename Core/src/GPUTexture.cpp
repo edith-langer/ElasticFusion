@@ -62,3 +62,42 @@ GPUTexture::~GPUTexture()
         cudaGraphicsUnregisterResource(cudaRes);
     }
 }
+
+float GPUTexture::computeAverage()
+{
+    texture->Bind();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    int max_level = std::floor(std::log2(std::max(width, height)));
+    switch (internalFormat)
+    {
+    case GL_LUMINANCE8:
+        {
+            unsigned char average = 0;
+            glGetTexImage(GL_TEXTURE_2D, max_level, format, dataType, &average);
+            return average;
+        }
+    case GL_LUMINANCE16:
+        {
+            unsigned short average = 0;
+            glGetTexImage(GL_TEXTURE_2D, max_level, format, dataType, &average);
+            return average;
+        }
+    case GL_RED:
+    case GL_R32F:
+    case GL_LUMINANCE:
+    case GL_LUMINANCE32F_ARB:
+        {
+            float average = 0;
+            glGetTexImage(GL_TEXTURE_2D, max_level, format, dataType, &average);
+            return average;
+        }
+    default:
+        throw std::runtime_error(
+            "GlTexture::computeAverage - Unsupported internal format (" +
+            pangolin::Convert<std::string,GLint>::Do(internalFormat) +
+            ")"
+        );
+    }
+}
+
