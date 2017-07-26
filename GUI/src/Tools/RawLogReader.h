@@ -19,18 +19,16 @@
 #ifndef RAWLOGREADER_H_
 #define RAWLOGREADER_H_
 
+#include <memory>
+
 #include <Utils/Resolution.h>
 #include <Utils/Stopwatch.h>
-#include <pangolin/utils/file_utils.h>
 
 #include "LogReader.h"
 
-#include <cassert>
-#include <zlib.h>
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <stack>
 
 class RawLogReader : public LogReader
 {
@@ -65,10 +63,11 @@ class RawLogReader : public LogReader
 
         virtual int getGain() override;
 
-        std::stack<int> filePointers;
-
     private:
         void getCore();
+
+        struct Impl;
+        std::unique_ptr<Impl> p;
 };
 
 #endif /* RAWLOGREADER_H_ */
