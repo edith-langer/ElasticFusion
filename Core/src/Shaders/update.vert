@@ -81,6 +81,9 @@ void main()
             vPosition0.w = c_k + a;
             vColor0.w = time;
         }
+
+        // Surfel ID update, smallest of the two wins
+        vColor0.y = min(vColor.y, newColor.y);
     }
     else
     {

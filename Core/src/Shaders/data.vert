@@ -90,7 +90,10 @@ void main()
     vec4 inColor = textureLod(cSampler, texcoord.xy, 0.0);
     
     vColor.x = encodeColor(inColor.xyz);
-    vColor.y = 0;
+    // The second field (y) will contain a unique surfel ID. It is based on the frame ID
+    // (contained in the time, which comes from ElasticFusion::tick) and the primitive ID.
+    // Minus one because counting ticks starts with 1, and we do not want to waste indices!
+    vColor.y = uint(y * cols + x) + uint(time - 1) * 307200u;
     vColor.z = uint(time);
     
     //Normal and radius computed with filtered position / depth map transformed to global coords

@@ -23,13 +23,25 @@
 
 #include "../Defines.h"
 
-class Vertex
+struct Vertex
 {
-    public:
-        EFUSION_API static const int SIZE;
+    EFUSION_API static const int SIZE;
 
-    private:
-        Vertex(){}
+    Vertex(){}
+
+    float x;
+    float y;
+    float z;
+    float confidence;
+    unsigned int color;
+    unsigned int id;
+    unsigned int init_time;
+    unsigned int timestamp;
+    float nx;
+    float ny;
+    float nz;
+    float radius;
+
 };
 
 

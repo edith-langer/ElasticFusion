@@ -30,7 +30,6 @@ void main()
 {
     vPosition0 = vPosition;
     vColor0 = vColor;
-    vColor0.y = 0; //Unused
     vColor0.z = 1; //This sets the vertex's initialisation time
     vNormRad0 = vNormRad;
 }

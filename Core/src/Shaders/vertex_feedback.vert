@@ -61,8 +61,10 @@ void main()
     vPosition.w = confidence(x, y, 1.0f);
     
     vColor.x = encodeColor(inColor.xyz);
-    
-    vColor.y = 0;
+    // The second field (y) will contain a unique surfel ID. It is based on the frame ID
+    // (contained in the time, which comes from ElasticFusion::tick) and the primitive ID.
+    // Minus one because counting ticks starts with 1, and we do not want to waste indices!
+    vColor.y = uint(y * cols + x) + uint(time - 1) * 307200u;
     vColor.z = time; // In original code was not explicitly initialized
     vColor.w = time;
 }
