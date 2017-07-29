@@ -87,7 +87,7 @@ class GlobalModel
 
         EFUSION_API unsigned int lastCount();
 
-        Eigen::Vector4f * downloadMap();
+        std::vector<Vertex> downloadMap();
 
     private:
         //First is the vbo, second is the fid

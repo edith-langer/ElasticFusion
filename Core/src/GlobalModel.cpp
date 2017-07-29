@@ -602,13 +602,14 @@ unsigned int GlobalModel::lastCount()
     return count;
 }
 
-Eigen::Vector4f * GlobalModel::downloadMap()
+std::vector<Vertex> GlobalModel::downloadMap()
 {
     glFinish();
 
-    Eigen::Vector4f * vertices = new Eigen::Vector4f[count * 3];
+    Vertex zero;
+    memset(&zero, 0, sizeof(Vertex));
 
-    memset(&vertices[0], 0, count * Vertex::SIZE);
+    std::vector<Vertex> vertices(count, zero);
 
     GLuint downloadVbo;
 
@@ -621,7 +622,7 @@ Eigen::Vector4f * GlobalModel::downloadMap()
     glBindBuffer(GL_COPY_WRITE_BUFFER, downloadVbo);
 
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, count * Vertex::SIZE);
-    glGetBufferSubData(GL_COPY_WRITE_BUFFER, 0, count * Vertex::SIZE, vertices);
+    glGetBufferSubData(GL_COPY_WRITE_BUFFER, 0, count * Vertex::SIZE, vertices.data());
 
     glBindBuffer(GL_COPY_READ_BUFFER, 0);
     glBindBuffer(GL_COPY_WRITE_BUFFER, 0);

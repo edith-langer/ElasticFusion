@@ -724,15 +724,13 @@ void ElasticFusion::savePly()
     std::ofstream fs;
     fs.open (filename.c_str ());
 
-    Eigen::Vector4f * mapData = globalModel.downloadMap();
+    std::vector<Vertex> mapData = globalModel.downloadMap();
 
     int validCount = 0;
 
     for(unsigned int i = 0; i < globalModel.lastCount(); i++)
     {
-        Eigen::Vector4f pos = mapData[(i * 3) + 0];
-
-        if(pos[3] > confidenceThreshold)
+        if(mapData[i].confidence > confidenceThreshold)
         {
             validCount++;
         }
@@ -758,6 +756,8 @@ void ElasticFusion::savePly()
 
     fs << "\nproperty float radius";
 
+    fs << "\nproperty uint id";
+
     fs << "\nend_header\n";
 
     // Close the file
@@ -768,53 +768,51 @@ void ElasticFusion::savePly()
 
     for(unsigned int i = 0; i < globalModel.lastCount(); i++)
     {
-        Eigen::Vector4f pos = mapData[(i * 3) + 0];
+        Vertex& v = mapData[i];
 
-        if(pos[3] > confidenceThreshold)
+        if(v.confidence > confidenceThreshold)
         {
-            Eigen::Vector4f col = mapData[(i * 3) + 1];
-            Eigen::Vector4f nor = mapData[(i * 3) + 2];
-
-            nor[0] *= -1;
-            nor[1] *= -1;
-            nor[2] *= -1;
+            v.nx *= -1;
+            v.ny *= -1;
+            v.nz *= -1;
 
             float value;
-            memcpy (&value, &pos[0], sizeof (float));
+            memcpy (&value, &v.x, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            memcpy (&value, &pos[1], sizeof (float));
+            memcpy (&value, &v.y, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            memcpy (&value, &pos[2], sizeof (float));
+            memcpy (&value, &v.z, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            unsigned char r = int(col[0]) >> 16 & 0xFF;
-            unsigned char g = int(col[0]) >> 8 & 0xFF;
-            unsigned char b = int(col[0]) & 0xFF;
+            unsigned char r = int(v.color) >> 16 & 0xFF;
+            unsigned char g = int(v.color) >> 8 & 0xFF;
+            unsigned char b = int(v.color) & 0xFF;
 
             fpout.write (reinterpret_cast<const char*> (&r), sizeof (unsigned char));
             fpout.write (reinterpret_cast<const char*> (&g), sizeof (unsigned char));
             fpout.write (reinterpret_cast<const char*> (&b), sizeof (unsigned char));
 
-            memcpy (&value, &nor[0], sizeof (float));
+            memcpy (&value, &v.nx, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            memcpy (&value, &nor[1], sizeof (float));
+            memcpy (&value, &v.ny, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            memcpy (&value, &nor[2], sizeof (float));
+            memcpy (&value, &v.nz, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            memcpy (&value, &nor[3], sizeof (float));
+            memcpy (&value, &v.radius, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
+
+            memcpy (&value, &v.id, sizeof (unsigned int));
+            fpout.write (reinterpret_cast<const char*> (&value), sizeof (unsigned int));
         }
     }
 
     // Close file
     fs.close ();
-
-    delete [] mapData;
 }
 
 Eigen::Vector3f ElasticFusion::rodrigues2(const Eigen::Matrix3f& matrix)
