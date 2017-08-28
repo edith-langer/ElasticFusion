@@ -19,13 +19,13 @@
 #version 430 core
 
 in vec4 vPosition0;
-in vec4 vColorTime0;
+flat in uvec4 vColorTime0;
 in vec4 vNormRad0;
 flat in int vertexId;
 
 layout(location = 0) out int FragColor;
 layout(location = 1) out vec4 vPosition1;
-layout(location = 2) out vec4 vColorTime1;
+layout(location = 2) out uvec4 vColorTime1;
 layout(location = 3) out vec4 vNormRad1;
 
 void main()

@@ -23,7 +23,7 @@ uniform float maxDepth;
 
 in vec4 position;
 in vec4 normRad;
-in vec4 colTime;
+flat in uvec4 colTime;
 
 layout(location = 0) out vec4 image;
 layout(location = 1) out vec4 vertex;
@@ -55,7 +55,7 @@ void main()
     
     normal = normRad;
     
-    time = uint(colTime.z);
+    time = colTime.z;
     
     gl_FragDepth = (corrected_pos.z / (2 * maxDepth)) + 0.5f;
 }

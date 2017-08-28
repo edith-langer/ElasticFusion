@@ -19,11 +19,11 @@
 #version 430 core
 
 layout (location = 0) in vec4 vPosition;
-layout (location = 1) in vec4 vColor;
+layout (location = 1) in uvec4 vColor;
 layout (location = 2) in vec4 vNormRad;
 
 out vec4 vPosition0;
-out vec4 vColor0;
+flat out uvec4 vColor0;
 out vec4 vNormRad0;
 
 void main()

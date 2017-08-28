@@ -19,11 +19,11 @@
 #version 430 core
 
 layout (location = 0) in vec4 vPos;
-layout (location = 1) in vec4 vCol;
+layout (location = 1) in uvec4 vCol;
 layout (location = 2) in vec4 vNormR;
 
 out vec4 vPosition;
-out vec4 vColor;
+flat out uvec4 vColor;
 out vec4 vNormRad;
 flat out int test;
 
@@ -36,7 +36,7 @@ uniform float rows;
 uniform float confThreshold;
 uniform usampler2D indexSampler;
 uniform sampler2D vertConfSampler;
-uniform sampler2D colorTimeSampler;
+uniform usampler2D colorTimeSampler;
 uniform sampler2D normRadSampler;
 uniform sampler2D nodeSampler;
 uniform sampler2D depthSampler;
@@ -70,7 +70,7 @@ void main()
     int zCount = 0;
 
     if(//abs(localNorm.z) > 0.85f &&
-       time - vColor.w < timeDelta && localPos.z > 0 && x > 0 && y > 0 && x < cols && y < rows)
+       time - int(vColor.w) < timeDelta && localPos.z > 0 && x > 0 && y > 0 && x < cols && y < rows)
     {
         for(float i = x / cols - (scale * indexXStep * windowMultiplier); i < x / cols + (scale * indexXStep * windowMultiplier); i += indexXStep)
         {
@@ -81,7 +81,7 @@ void main()
                if(current > 0U)
                {
                    vec4 vertConf = textureLod(vertConfSampler, vec2(i, j), 0);
-                   vec4 colorTime = textureLod(colorTimeSampler, vec2(i, j), 0);
+                   uvec4 colorTime = textureLod(colorTimeSampler, vec2(i, j), 0);
 
                    if(colorTime.z < vColor.z && 
                       vertConf.w > confThreshold && 
@@ -111,18 +111,18 @@ void main()
     }
     
     //New unstable point
-    if(vColor.w == -2)
+    if(int(vColor.w) == -2)
     {
         vColor.w = time;
     }
     
     //Degenerate case or too unstable
-    if((vColor.w == -1 || ((time - vColor.w) > 20 && vPosition.w < confThreshold)))
+    if((int(vColor.w) == -1 || ((time - int(vColor.w)) > 20 && vPosition.w < confThreshold)))
     {
         test = 0;
     }
     
-    if(vColor.w > 0 && time - vColor.w > timeDelta)
+    if(int(vColor.w) > 0 && time - int(vColor.w) > timeDelta)
     {
         test = 1;
     }

@@ -24,7 +24,7 @@ layout(triangle_strip, max_vertices = 4) out;
 uniform float threshold;
 uniform float signMult;
 
-in vec4 vColor[];
+flat in uvec4 vColor[];
 in vec4 vPosition[];
 in vec4 vNormRad[];
 in mat4 vMVP[];
@@ -56,7 +56,7 @@ void main()
         }
         else if(colorType0[0] == 3)
         {
-            vColor0 = vec3(vColor[0].z / float(vTime[0]));
+            vColor0 = vec3(float(vColor[0].z) / float(vTime[0]));
             
             float minimum = 1.0f;
             float maximum = float(vTime[0]);
@@ -73,7 +73,7 @@ void main()
             vColor0 = (vec3(.5f, .5f, .5f) * abs(dot(vNormRad[0].xyz, vec3(1.0, 1.0, 1.0)))) + vec3(0.1f, 0.1f, 0.1f);
         }
     
-        if(drawWindow0[0] == 1 && vTime[0] - vColor[0].w > timeDelta0[0])
+        if(drawWindow0[0] == 1 && vTime[0] - int(vColor[0].w) > timeDelta0[0])
         {
             vColor0 *= 0.25;
         }

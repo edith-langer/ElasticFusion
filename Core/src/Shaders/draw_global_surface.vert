@@ -19,7 +19,7 @@
 #version 430 core
 
 layout (location = 0) in vec4 position;
-layout (location = 1) in vec4 color;
+layout (location = 1) in uvec4 color;
 layout (location = 2) in vec4 normal;
 
 uniform mat4 MVP;
@@ -30,7 +30,7 @@ uniform int drawWindow;
 uniform int time;
 uniform int timeDelta;
 
-out vec4 vColor;
+flat out uvec4 vColor;
 out vec4 vPosition;
 out vec4 vNormRad;
 out mat4 vMVP;

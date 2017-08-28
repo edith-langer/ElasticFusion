@@ -22,12 +22,12 @@ layout(points) in;
 layout(points, max_vertices = 1) out;
 
 in vec4 vPosition[];
-in vec4 vColor[];
+flat in uvec4 vColor[];
 in vec4 vNormRad[];
 in float zVal[];
 
 out vec4 vPosition0;
-out vec4 vColor0;
+flat out uvec4 vColor0;
 out vec4 vNormRad0;
 
 void main() 

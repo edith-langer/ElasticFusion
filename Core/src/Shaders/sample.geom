@@ -22,7 +22,7 @@ layout(points) in;
 layout(points, max_vertices = 1) out;
 
 in vec4 vPosition0[];
-in vec4 vColorTime0[];
+flat in uvec4 vColorTime0[];
 in vec4 vNormRad0[];
 flat in int id[];
 

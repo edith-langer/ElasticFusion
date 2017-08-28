@@ -16,19 +16,12 @@
  *
  */
 
-float encodeColor(vec3 c)
+uint encodeColor(vec3 c)
 {
-    int rgb = int(round(c.x * 255.0f));
-    rgb = (rgb << 8) + int(round(c.y * 255.0f));
-    rgb = (rgb << 8) + int(round(c.z * 255.0f));
-    return float(rgb);
+  return packUnorm4x8(vec4(c, 0));
 }
 
-vec3 decodeColor(float c)
+vec3 decodeColor(uint c)
 {
-    vec3 col;
-    col.x = float(int(c) >> 16 & 0xFF) / 255.0f;
-    col.y = float(int(c) >> 8 & 0xFF) / 255.0f;
-    col.z = float(int(c) & 0xFF) / 255.0f;
-    return col;
+  return unpackUnorm4x8(c).xyz;
 }
