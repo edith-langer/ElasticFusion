@@ -786,9 +786,9 @@ void ElasticFusion::savePly()
             memcpy (&value, &v.z, sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            unsigned char r = v.color >> 16 & 0xFF;
+            unsigned char b = v.color >> 16 & 0xFF;
             unsigned char g = v.color >> 8 & 0xFF;
-            unsigned char b = v.color & 0xFF;
+            unsigned char r = v.color & 0xFF;
 
             fpout.write (reinterpret_cast<const char*> (&r), sizeof (unsigned char));
             fpout.write (reinterpret_cast<const char*> (&g), sizeof (unsigned char));
