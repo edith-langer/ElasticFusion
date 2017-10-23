@@ -1,3 +1,111 @@
+This fork contains a set of extensions for ElasticFusion that allow to
+reconstruct maps with High Dynamic Range (HDR) colors. For lack of a better
+name, we call it HDR-SLAM.
+
+# Why should I care?
+
+Vanilla ElasticFusion (and most other state-of-the-art dense mapping systems)
+takes naive approach to handling colors. It simply averages pixel observations,
+without paying attention to possible differences in exposure time or white
+balance between different images. As a result, you get reconstructions like
+this:
+
+<p align="center"><img src ="Docs/ldr-aec.png"/></p>
+
+Not necessarily every reconstruction will be this bad, but some artifacts will
+always be present. One possibility to overcome this issue is to disable the
+automatic exposure time controller (AEC) and automatic white balance (AWB)
+functions of the camera. However, if your scene has higher dynamic range than
+that of a single camera image (which most often will be the case), then you will
+get a reconstruction like this:
+
+<p align="center"><img src ="Docs/ldr-fix.png"/></p>
+
+Note that parts of the reconstruction are white (i.e. were over-exposed) and do
+not contain the information about the actual color of the surfaces.
+
+HDR-SLAM, in contrast, handles colors in HDR space, takes into account the
+differences in exposure time, and, what's more, controls exposure time itself in
+order to obtain as good reconstruction as possible. It will give you a
+reconstruction like this:
+
+<p align="center"><img src ="Docs/hdr.png"/></p>
+
+Please refer to our [paper][] and [video][] for details and more examples.
+
+# What do I need to build this?
+
+To begin with, you need to install everything that vanilla ElastiFusion
+requires, so refer to [this section](#1-what-do-i-need-to-build-it). Note that
+though ElasticFusion supports multiple Ubuntu versions as well as Windows, this
+fork was developed and is known to work only on Ubuntu 16.04. It may work on
+other platforms just fine, but no guarantees.
+
+The only additional required dependency of HDR-SLAM is the [radical][] library,
+which is used to radiometrically rectify camera images. Please refer to their
+installation and camera calibration instructions.
+
+# What exactly are the differences compared to vanilla ElasticFusion?
+
+1. Colors in the map are represented in HDR space, each channel has 16 bits.
+   * Note that even though the original ElasticFusion used only 24 bits to
+     represent a color, it still allocated 64 bits, so this change has no impact
+     on the GPU memory footprint.
+   * The format of the output PLY files is updated accordingly, color channels
+     are written out with unsigned short integers.
+2. Auto exposure time and white balance controllers of the camera are disabled
+   and the system adjusts exposure time itself.
+3. Camera grabbers expose API to change exposure time and gain settings.
+4. The reconstructed scene can be rendered using arbitrary exposure time that
+   can be selected using a slider in the GUI.
+5. Minimum OpenGL version requirement is lifted to 4.3.
+
+# How to run this?
+
+HDR-SLAM supports all command-line options of the original ElasticFusion (see
+the list [here](#4-how-do-i-use-it)), plus several additions:
+
+* *-crf < radiometric-calibration-file >* : Radiometric calibration file (required);
+* *-vgn < vignetting-calibration-file >* : Vignetting calibration file (required);
+* *-min-exposure < min-exposure-time >* : Minimum exposure time that the
+    controller can choose (default: *1*);
+* *-max-exposure < max-exposure-time >* : Maximum exposure time that the
+    controller controller can choose (default: *33*). Beware that going beyond
+    33 ms may cause significant motion blur;
+* *-gain < camera-gain >* : Camera gain (default: *200*), set to a higher value if
+    the scene is not well-lit.
+
+The first two options are compulsory. You need to radiometrically calibrate your
+camera with [radical][] and supply the calibration files.
+
+Note that you may want to set ElasticFusion's ICP/RGB tracking weight to 100 by
+passing *-i 100* option (effectively, disable RGB tracking). According to our
+experiments, alignment in HDR space sometimes fails and may hinder the tracking
+performance.
+
+# Citing
+
+If you use this in the academic context, please cite the following paper:
+
+> [**High Dynamic Range SLAM with Map-Aware Exposure Time Control**][paper], *S. V. Alexandrov, J. Prankl, M. Zillich, M. Vincze*, 3DV'17
+
+Goes without saying, you should also cite the [original ElasticFusion
+papers](#related-publications).
+
+# License
+
+For the systems as a whole, please refer to the original ElasticFusion
+[license](#7-license). As for the source code bits introduced in this fork, I do
+not care, so consider them [unlicensed](unlicense.org).
+
+[paper]: https://www.dropbox.com/s/ew29y4uvl48tshs/alexandrov_2017_3dv.pdf?dl=0
+[video]: https://youtu.be/u47kNI2b4ww
+[radical]: https://github.com/taketwo/radical
+
+---
+
+# Original README
+
 # ElasticFusion #
 
 Real-time dense visual SLAM system capable of capturing comprehensive dense globally consistent surfel-based maps of room scale environments explored using an RGB-D camera.
