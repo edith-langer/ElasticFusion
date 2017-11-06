@@ -61,6 +61,12 @@ class Uniform
            t(MAT4)
         {}
 
+        Uniform(const std::string & id, const Eigen::Array3f & v)
+         : id(id),
+           v3(v.matrix()),
+           t(VEC3)
+        {}
+
         std::string id;
 
         int i;

@@ -33,7 +33,11 @@ ElasticFusion::ElasticFusion(const int timeDelta,
                              const float fernThresh,
                              const bool so3,
                              const bool frameToFrameRGB,
-                             const std::string fileName)
+                             const std::string fileName,
+                             const std::string crfFile,
+                             const std::string vgnFile,
+                             const unsigned int minExposureTime,
+                             const unsigned int maxExposureTime)
  : frameToModel(Resolution::getInstance().width(),
                 Resolution::getInstance().height(),
                 Intrinsics::getInstance().cx(),
@@ -47,6 +51,7 @@ ElasticFusion::ElasticFusion(const int timeDelta,
                 Intrinsics::getInstance().fx(),
                 Intrinsics::getInstance().fy()),
    ferns(500, depthCut * 1000, photoThresh),
+   colorMgr(crfFile, vgnFile, minExposureTime, maxExposureTime, 5, 254),
    saveFilename(fileName),
    currPose(Eigen::Matrix4f::Identity()),
    tick(1),
@@ -160,10 +165,9 @@ void ElasticFusion::createTextures()
 {
     textures[GPUTexture::RGB] = new GPUTexture(Resolution::getInstance().width(),
                                                Resolution::getInstance().height(),
-                                               GL_RGBA,
+                                               GL_RGB,
                                                GL_RGB,
                                                GL_UNSIGNED_BYTE,
-                                               true,
                                                true);
 
     textures[GPUTexture::DEPTH_RAW] = new GPUTexture(Resolution::getInstance().width(),
@@ -224,12 +228,12 @@ void ElasticFusion::createFeedbackBuffers()
 void ElasticFusion::computeFeedbackBuffers()
 {
     TICK("feedbackBuffers");
-    feedbackBuffers[FeedbackBuffer::RAW]->compute(textures[GPUTexture::RGB]->texture,
+    feedbackBuffers[FeedbackBuffer::RAW]->compute(colorMgr.hdrTex()->texture,
                                                   textures[GPUTexture::DEPTH_METRIC]->texture,
                                                   tick,
                                                   maxDepthProcessed);
 
-    feedbackBuffers[FeedbackBuffer::FILTERED]->compute(textures[GPUTexture::RGB]->texture,
+    feedbackBuffers[FeedbackBuffer::FILTERED]->compute(colorMgr.hdrTex()->texture,
                                                        textures[GPUTexture::DEPTH_METRIC_FILTERED]->texture,
                                                        tick,
                                                        maxDepthProcessed);
@@ -254,6 +258,7 @@ bool ElasticFusion::denseEnough(const Img<Eigen::Matrix<unsigned char, 3, 1>> & 
 }
 
 void ElasticFusion::processFrame(const unsigned char * rgb,
+                                 float& exposureTime,
                                  const unsigned short * depth,
                                  const int64_t & timestamp,
                                  const Eigen::Matrix4f * inPose,
@@ -267,6 +272,8 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
 
     TICK("Preprocess");
 
+    colorMgr.linearize(textures[GPUTexture::RGB]);
+    colorMgr.computeRadianceAndHDR(exposureTime);
     filterDepth();
     metriciseDepth();
 
@@ -279,7 +286,7 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
 
         globalModel.initialise(*feedbackBuffers[FeedbackBuffer::RAW], *feedbackBuffers[FeedbackBuffer::FILTERED]);
 
-        frameToModel.initFirstRGB(textures[GPUTexture::RGB]);
+        frameToModel.initFirstRGB(colorMgr.radianceTex());
     }
     else
     {
@@ -302,7 +309,7 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
             frameToModel.initRGBModel((shouldFillIn || frameToFrameRGB) ? &fillIn.imageTexture : indexMap.imageTex());
 
             frameToModel.initICP(textures[GPUTexture::DEPTH_FILTERED], maxDepthProcessed);
-            frameToModel.initRGB(textures[GPUTexture::RGB]);
+            frameToModel.initRGB(colorMgr.radianceTex());
             TOCK("odomInit");
 
             if(bootstrap)
@@ -575,7 +582,7 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
 
             globalModel.fuse(currPose,
                              tick,
-                             textures[GPUTexture::RGB],
+                             colorMgr.hdrTex(),
                              textures[GPUTexture::DEPTH_METRIC],
                              textures[GPUTexture::DEPTH_METRIC_FILTERED],
                              indexMap.indexTex(),
@@ -584,7 +591,8 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
                              indexMap.normalRadTex(),
                              maxDepthProcessed,
                              confidenceThreshold,
-                             weighting);
+                             weighting,
+                             exposureTime);
 
             TICK("indexMap");
             indexMap.predictIndices(currPose, tick, globalModel.model(), maxDepthProcessed, timeDelta);
@@ -678,7 +686,7 @@ void ElasticFusion::predict()
     TICK("FillIn");
     fillIn.vertex(indexMap.vertexTex(), textures[GPUTexture::DEPTH_FILTERED], lost);
     fillIn.normal(indexMap.normalTex(), textures[GPUTexture::DEPTH_FILTERED], lost);
-    fillIn.image(indexMap.imageTex(), textures[GPUTexture::RGB], lost || frameToFrameRGB);
+    fillIn.image(indexMap.imageTex(), colorMgr.radianceTex(), lost || frameToFrameRGB);
     TOCK("FillIn");
 
     TOCK("IndexMap::ACTIVE");
@@ -748,9 +756,9 @@ void ElasticFusion::savePly()
           "\nproperty float y"
           "\nproperty float z";
 
-    fs << "\nproperty uchar red"
-          "\nproperty uchar green"
-          "\nproperty uchar blue";
+    fs << "\nproperty ushort r"
+          "\nproperty ushort g"
+          "\nproperty ushort b";
 
     fs << "\nproperty float nx"
           "\nproperty float ny"
@@ -789,13 +797,15 @@ void ElasticFusion::savePly()
             memcpy (&value, &pos[2], sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));
 
-            unsigned char r = int(col[0]) >> 16 & 0xFF;
-            unsigned char g = int(col[0]) >> 8 & 0xFF;
-            unsigned char b = int(col[0]) & 0xFF;
+            unsigned int rg = *reinterpret_cast<unsigned int*>(&col[0]);
+            unsigned int bc = *reinterpret_cast<unsigned int*>(&col[1]);
+            unsigned short r = rg & 0xFFFF;
+            unsigned short g = rg >> 16 & 0xFFFF;
+            unsigned short b = bc & 0xFFFF;
 
-            fpout.write (reinterpret_cast<const char*> (&r), sizeof (unsigned char));
-            fpout.write (reinterpret_cast<const char*> (&g), sizeof (unsigned char));
-            fpout.write (reinterpret_cast<const char*> (&b), sizeof (unsigned char));
+            fpout.write (reinterpret_cast<const char*> (&r), sizeof (unsigned short));
+            fpout.write (reinterpret_cast<const char*> (&g), sizeof (unsigned short));
+            fpout.write (reinterpret_cast<const char*> (&b), sizeof (unsigned short));
 
             memcpy (&value, &nor[0], sizeof (float));
             fpout.write (reinterpret_cast<const char*> (&value), sizeof (float));

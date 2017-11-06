@@ -55,8 +55,37 @@ void main()
         }
         else if(colorType0[0] == 2)
         {
-            vColor0 = decodeColor(vColor[0].xy);
+            if (!isHDRColorComplete(vColor[0].xy))
+            {
+              uvec2 hdr_packed = vColor[0].xy;
+              vec4 rlglblrh = unpackUnorm4x8(uint(hdr_packed.x));
+              vec4 ghbhwwww = unpackUnorm4x8(uint(hdr_packed.y));
+              vec3 lo = rlglblrh.xyz;
+              vec3 hi = vec3(rlglblrh.w, ghbhwwww.xy);
+              // Incomplete surfels are color-coded for debug purposes
+              //   * RED    boundaries are reversed (any channel)
+              //   * VIOLET black point (any channel)
+              //   * YELLOW white point (any channel)
+              //   * GREEN  one of the channels has exact estimate
+              //   * BLUE   everything else
+              if (any(greaterThan(lo, hi)))
+                  vColor0 = vec3(1.0, 0.0, 0.0);
+              else if (any(equal(hi, vec3(0.0))))  // upper boundary is 0 → black point
+                  vColor0 = vec3(1.0, 0.0, 1.0);
+              else if (any(equal(lo, vec3(1.0))))  // lower boundary is 1 → white point
+                  vColor0 = vec3(1.0, 1.0, 0.0);
+              else if (any(equal(lo, hi)))
+                  vColor0 = vec3(0.0, 1.0, 0.0);
+              else
+                  vColor0 = vec3(0.0, 0.0, 1.0);
+              tonemap = 0;
+              return;
+            }
+            else
+            {
+              vColor0 = unpackHDRColorComplete(vColor[0].xy).xyz;
               tonemap = 1;
+            }
         }
         else if(colorType0[0] == 3)
         {

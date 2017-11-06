@@ -79,7 +79,7 @@ FeedbackBuffer::~FeedbackBuffer()
     glDeleteQueries(1, &countQuery);
 }
 
-void FeedbackBuffer::compute(pangolin::GlTexture * color,
+void FeedbackBuffer::compute(pangolin::GlTexture * hdr,
                              pangolin::GlTexture * depth,
                              const int & time,
                              const float depthCutoff)
@@ -116,7 +116,7 @@ void FeedbackBuffer::compute(pangolin::GlTexture * color,
     glBindTexture(GL_TEXTURE_2D, depth->tid);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, color->tid);
+    glBindTexture(GL_TEXTURE_2D, hdr->tid);
 
     glDrawArrays(GL_POINTS, 0, Resolution::getInstance().numPixels());
 

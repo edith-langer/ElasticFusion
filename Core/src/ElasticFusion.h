@@ -33,6 +33,7 @@
 #include "Ferns.h"
 #include "PoseMatch.h"
 #include "Defines.h"
+#include "ColorManager.h"
 
 #include <iomanip>
 #include <pangolin/gl/glcuda.h>
@@ -55,7 +56,11 @@ class ElasticFusion
                       const float fernThresh = 0.3095,
                       const bool so3 = true,
                       const bool frameToFrameRGB = false,
-                      const std::string fileName = "");
+                      const std::string fileName = "",
+                      const std::string crfFile = "",
+                      const std::string vgnFile = "",
+                      const unsigned int minExposureTime = 1,
+                      const unsigned int maxExposureTime = 33);
 
         virtual ~ElasticFusion();
 
@@ -69,6 +74,7 @@ class ElasticFusion
          * @param bootstrap if true, use inPose as a pose guess rather than replacement
          */
         EFUSION_API void processFrame(const unsigned char * rgb,
+                          float& exposureTime,
                           const unsigned short * depth,
                           const int64_t & timestamp,
                           const Eigen::Matrix4f * inPose = 0,
@@ -265,6 +271,7 @@ class ElasticFusion
         Ferns ferns;
         Deformation localDeformation;
         Deformation globalDeformation;
+        ColorManager colorMgr;
 
         const std::string saveFilename;
         std::map<std::string, GPUTexture*> textures;

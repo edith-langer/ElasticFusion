@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
 find_package(Pangolin 0.1 REQUIRED)
 find_package(CUDA REQUIRED)
 find_package(SuiteSparse REQUIRED)
+find_package(radical CONFIG REQUIRED)
 
 set(efusion_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Shaders" CACHE PATH "Where the shaders live")
 
@@ -74,6 +75,7 @@ target_link_libraries(efusion
                       ${CUDA_LIBRARIES}
                       ${SUITESPARSE_LIBRARIES}
 					  ${EXTRA_WINDOWS_LIBS}
+                      radical
 )
 
 INSTALL(TARGETS efusion

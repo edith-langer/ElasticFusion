@@ -61,12 +61,9 @@ void main()
         {
 	        vPosition0 = vec4(((c_k * v_k) + (a * v_g)) / (c_k + a), c_k + a);
 	        
-	        vec3 oldCol = decodeColor(vColor.xy);
-	        vec3 newCol = decodeColor(newColor.xy);
-           
-            vec3 avgColor = ((c_k * oldCol.xyz) + (a * newCol.xyz)) / (c_k + a);
+                uvec2 fused = fusePackedHDRColors(vColor.xy, newColor.xy);
             
-	        vColor0 = uvec4(encodeColor(avgColor), vColor.z, time);
+	        vColor0 = uvec4(fused, vColor.z, time);
 	        
 	        vNormRad0 = ((c_k * vNormRad) + (a * newNorm)) / (c_k + a);
 	        

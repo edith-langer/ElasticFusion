@@ -311,7 +311,7 @@ const std::pair<GLuint, GLuint> & GlobalModel::model()
 
 void GlobalModel::fuse(const Eigen::Matrix4f & pose,
                        const int & time,
-                       GPUTexture * rgb,
+                       GPUTexture * hdr,
                        GPUTexture * depthRaw,
                        GPUTexture * depthFiltered,
                        GPUTexture * indexMap,
@@ -320,7 +320,8 @@ void GlobalModel::fuse(const Eigen::Matrix4f & pose,
                        GPUTexture * normRadMap,
                        const float depthCutoff,
                        const float confThreshold,
-                       const float weighting)
+                       const float weighting,
+                       const float exposureTime)
 {
     TICK("Fuse::Data");
     //This first part does data association and computes the vertex to merge with, storing
@@ -366,7 +367,7 @@ void GlobalModel::fuse(const Eigen::Matrix4f & pose,
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, newUnstableVbo);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, rgb->texture->tid);
+    glBindTexture(GL_TEXTURE_2D, hdr->texture->tid);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depthRaw->texture->tid);

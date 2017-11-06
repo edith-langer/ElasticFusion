@@ -21,9 +21,9 @@
 FillIn::FillIn()
  : imageTexture(Resolution::getInstance().width(),
                 Resolution::getInstance().height(),
-                GL_RGBA,
+                GL_RGBA32F,
                 GL_RGB,
-                GL_UNSIGNED_BYTE,
+                GL_FLOAT,
                 false,
                 true),
    vertexTexture(Resolution::getInstance().width(),

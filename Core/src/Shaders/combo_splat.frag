@@ -47,7 +47,15 @@ void main()
         discard;
     }
 
-    image = vec4(decodeColor(colTime.xy), 1);
+    // TODO: this does not make much sense.
+    // At the moment compresses the entire range
+    // Will be used for RGB alignment, but is not at scale with input color
+    vec4 hdr = unpackHDRColorComplete(colTime.xy);
+    if (hdr.w > 0)
+      image = vec4(vec3(1.0) + log(hdr.xyz) / 7, 1);
+      // image = vec4(hdr.xyz, 1);
+    else
+      image = vec4(0, 0, 0, 1);
     
     float z = corrected_pos.z;
     

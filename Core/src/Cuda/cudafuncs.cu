@@ -545,7 +545,7 @@ void verticesToDepth(DeviceArray<float>& vmap_src, DeviceArray2D<float> & dst, f
     cudaSafeCall ( cudaGetLastError () );
 };
 
-texture<uchar4, 2, cudaReadModeElementType> inTex;
+texture<float4, 2, cudaReadModeElementType> inTex;
 
 __global__ void bgr2IntensityKernel(PtrStepSz<unsigned char> dst)
 {
@@ -555,9 +555,9 @@ __global__ void bgr2IntensityKernel(PtrStepSz<unsigned char> dst)
     if (x >= dst.cols || y >= dst.rows)
         return;
 
-    uchar4 src = tex2D(inTex, x, y);
+    float4 src = tex2D(inTex, x, y);
 
-    int value = (float)src.x * 0.114f + (float)src.y * 0.299f + (float)src.z * 0.587f;
+    int value = round((src.x * 0.114f + src.y * 0.299f + src.z * 0.587f) * 255.0f);
 
     dst.ptr (y)[x] = value;
 }

@@ -15,7 +15,7 @@
  * please email researchcontracts.engineering@imperial.ac.uk.
  *
  */
- 
+
 #include "MainController.h"
 
 MainController::MainController(int argc, char * argv[])
@@ -44,6 +44,16 @@ MainController::MainController(int argc, char * argv[])
     {
         Intrinsics::getInstance(528, 528, 320, 240);
     }
+
+    Parse::get().arg(argc, argv, "-crf", crfFile);
+    assert(crfFile.length() && "CRF should be provided");
+    Parse::get().arg(argc, argv, "-vgn", vgnFile);
+    assert(vgnFile.length() && "Vignetting response should be provided");
+
+    minExposureTime = 1;
+    maxExposureTime = 33;
+    Parse::get().arg(argc, argv, "-min-exposure", minExposureTime);
+    Parse::get().arg(argc, argv, "-max-exposure", maxExposureTime);
 
     Parse::get().arg(argc, argv, "-l", logFile);
 
@@ -211,7 +221,11 @@ void MainController::launch()
                                         fernThresh,
                                         so3,
                                         frameToFrameRGB,
-                                        logReader->getFile());
+                                        logReader->getFile(),
+                                        crfFile,
+                                        vgnFile,
+                                        minExposureTime,
+                                        maxExposureTime);
         }
         else
         {
@@ -276,7 +290,9 @@ void MainController::run()
                     *currentPose = groundTruthOdometry->getTransformation(logReader->timestamp);
                 }
 
-                eFusion->processFrame(logReader->rgb, logReader->depth, logReader->timestamp, currentPose, weightMultiplier);
+                float currentExposureTime = logReader->getExposureTime();
+                eFusion->processFrame(logReader->rgb, currentExposureTime,
+                                      logReader->depth, logReader->timestamp, currentPose, weightMultiplier);
 
                 if(currentPose)
                 {

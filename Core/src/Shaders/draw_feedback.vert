@@ -44,8 +44,19 @@ void main()
         }
         else if(colorType == 2)
         {
-            vColor = vec4(decodeColor(color.xy), 1.0);
+            // Assume color is complete. If it is fact incomplete, we get garbage in RGB, but
+            // that does not matter. Weight will be valid either way.
+            vec4 hdr = unpackHDRColorComplete(color.xy);
+            if (hdr.w == 0)
+            {
+              vColor = vec4(1.0, 0.0, 0.0, 1.0);
+              tonemap = 0;
+            }
+            else
+            {
+              vColor = vec4(hdr.xyz, 1.0);
               tonemap = 1;
+            }
         }
         else
         {

@@ -49,6 +49,8 @@ class MainController
         bool iclnuim;
         std::string logFile;
         std::string poseFile;
+        std::string crfFile;
+        std::string vgnFile;
 
         float confidence,
               depth,
@@ -62,7 +64,9 @@ class MainController
             icpCountThresh,
             start,
             end,
-            gain;
+            gain,
+            minExposureTime,
+            maxExposureTime;
 
         bool fillIn,
              openLoop,

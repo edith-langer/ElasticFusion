@@ -62,7 +62,7 @@ class GlobalModel
 
         void fuse(const Eigen::Matrix4f & pose,
                   const int & time,
-                  GPUTexture * rgb,
+                  GPUTexture * hdr,
                   GPUTexture * depthRaw,
                   GPUTexture * depthFiltered,
                   GPUTexture * indexMap,
@@ -71,7 +71,8 @@ class GlobalModel
                   GPUTexture * normRadMap,
                   const float depthCutoff,
                   const float confThreshold,
-                  const float weighting);
+                  const float weighting,
+                  const float exposureTime);
 
         void clean(const Eigen::Matrix4f & pose,
                    const int & time,

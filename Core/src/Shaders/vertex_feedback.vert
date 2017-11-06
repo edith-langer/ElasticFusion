@@ -26,7 +26,7 @@ out vec4 vNormRad;
 out float zVal;
 
 uniform sampler2D gSampler;
-uniform sampler2D cSampler;
+uniform usampler2D cSampler;
 uniform vec4 cam; //cx, cy, 1/fx, 1/fy
 uniform float cols;
 uniform float rows;
@@ -44,7 +44,6 @@ void main()
     float y = texcoord.y * rows;
 
     vPosition = vec4(getVertex(texcoord.xy, x, y, cam, gSampler), 1);
-    vec4 inColor = textureLod(cSampler, texcoord.xy, 0.0);
     
     vec3 vNormLocal = getNormal(vPosition.xyz, texcoord.xy, x, y, cam, gSampler);
     vNormRad = vec4(vNormLocal, getRadius(vPosition.z, vNormLocal.z));
@@ -60,7 +59,7 @@ void main()
     
     vPosition.w = confidence(x, y, 1.0f);
     
-    vColor.xy = encodeColor(inColor.xyz);
+    vColor.xy = textureLod(cSampler, texcoord.xy, 0.0).xy;
     vColor.z = time; // In original code was not explicitly initialized
     vColor.w = time;
 }
