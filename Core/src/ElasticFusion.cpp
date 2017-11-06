@@ -52,6 +52,7 @@ ElasticFusion::ElasticFusion(const int timeDelta,
                 Intrinsics::getInstance().fy()),
    ferns(500, depthCut * 1000, photoThresh),
    colorMgr(crfFile, vgnFile, minExposureTime, maxExposureTime, 5, 254),
+   exposureCtrl(colorMgr),
    saveFilename(fileName),
    currPose(Eigen::Matrix4f::Identity()),
    tick(1),
@@ -273,6 +274,7 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
     TICK("Preprocess");
 
     colorMgr.linearize(textures[GPUTexture::RGB]);
+    exposureTime = exposureCtrl.computeCurrentExposureTime(colorMgr.luminanceTex(), exposureTime);
     colorMgr.computeRadianceAndHDR(exposureTime);
     filterDepth();
     metriciseDepth();
@@ -647,6 +649,11 @@ void ElasticFusion::processFrame(const unsigned char * rgb,
     }
 
     TOCK("Run");
+}
+
+float ElasticFusion::computeNextExposureTime()
+{
+    return exposureCtrl.computeNextExposureTime(indexMap.colorStateTex());
 }
 
 void ElasticFusion::processFerns()

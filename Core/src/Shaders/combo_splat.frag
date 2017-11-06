@@ -29,6 +29,7 @@ layout(location = 0) out vec4 image;
 layout(location = 1) out vec4 vertex;
 layout(location = 2) out vec4 normal;
 layout(location = 3) out uint time;
+layout(location = 4) out uvec2 colorState;
 
 #include "color.glsl"
 
@@ -56,6 +57,8 @@ void main()
       // image = vec4(hdr.xyz, 1);
     else
       image = vec4(0, 0, 0, 1);
+
+    colorState = colTime.xy;
     
     float z = corrected_pos.z;
     

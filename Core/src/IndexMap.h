@@ -122,6 +122,11 @@ class IndexMap
             return &timeTexture;
         }
 
+        GPUTexture * colorStateTex()
+        {
+            return &colorStateTexture;
+        }
+
         GPUTexture * oldImageTex()
         {
             return &oldImageTexture;
@@ -185,6 +190,7 @@ class IndexMap
         GPUTexture vertexTexture;
         GPUTexture normalTexture;
         GPUTexture timeTexture;
+        GPUTexture colorStateTexture;
 
         pangolin::GlFramebuffer oldFrameBuffer;
         pangolin::GlRenderBuffer oldRenderBuffer;

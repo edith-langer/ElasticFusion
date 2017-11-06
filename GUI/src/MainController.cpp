@@ -293,6 +293,15 @@ void MainController::run()
                 float currentExposureTime = logReader->getExposureTime();
                 eFusion->processFrame(logReader->rgb, currentExposureTime,
                                       logReader->depth, logReader->timestamp, currentPose, weightMultiplier);
+                float nextExposureTime = eFusion->computeNextExposureTime();
+                if (nextExposureTime > 0)
+                {
+                    logReader->setExposureTime(nextExposureTime);
+                    gui->cameraExposure->Ref().Set(nextExposureTime);
+                }
+
+                if (recorder)
+                    recorder->recordFrame(logReader->rgb, logReader->depth, currentExposureTime, logReader->timestamp);
 
                 if(currentPose)
                 {
@@ -575,3 +584,4 @@ void MainController::run()
         TOCK("GUI");
     }
 }
+

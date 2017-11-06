@@ -34,6 +34,7 @@
 #include "PoseMatch.h"
 #include "Defines.h"
 #include "ColorManager.h"
+#include "ExposureTimeController.h"
 
 #include <iomanip>
 #include <pangolin/gl/glcuda.h>
@@ -261,6 +262,8 @@ class ElasticFusion
          */
         EFUSION_API void normaliseDepth(const float & minVal, const float & maxVal);
 
+        EFUSION_API float computeNextExposureTime();
+
         //Here be dragons
     private:
         IndexMap indexMap;
@@ -272,6 +275,7 @@ class ElasticFusion
         Deformation localDeformation;
         Deformation globalDeformation;
         ColorManager colorMgr;
+        ExposureTimeController exposureCtrl;
 
         const std::string saveFilename;
         std::map<std::string, GPUTexture*> textures;

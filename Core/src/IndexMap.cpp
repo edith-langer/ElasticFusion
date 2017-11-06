@@ -76,6 +76,11 @@ IndexMap::IndexMap()
               GL_UNSIGNED_SHORT,
               false,
               true),
+  colorStateTexture(Resolution::getInstance().width(),
+                    Resolution::getInstance().height(),
+                    GL_RG32UI,
+                    GL_RG_INTEGER,
+                    GL_UNSIGNED_INT),
   oldRenderBuffer(Resolution::getInstance().width(), Resolution::getInstance().height()),
   oldImageTexture(Resolution::getInstance().width(),
                   Resolution::getInstance().height(),
@@ -125,6 +130,7 @@ IndexMap::IndexMap()
    combinedFrameBuffer.AttachColour(*vertexTexture.texture);
    combinedFrameBuffer.AttachColour(*normalTexture.texture);
    combinedFrameBuffer.AttachColour(*timeTexture.texture);
+   combinedFrameBuffer.AttachColour(*colorStateTexture.texture);
    combinedFrameBuffer.AttachDepth(combinedRenderBuffer);
 
    oldFrameBuffer.AttachDepth(oldRenderBuffer);
