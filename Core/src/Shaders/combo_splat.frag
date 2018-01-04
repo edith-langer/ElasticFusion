@@ -29,6 +29,7 @@ layout(location = 0) out vec4 image;
 layout(location = 1) out vec4 vertex;
 layout(location = 2) out vec4 normal;
 layout(location = 3) out uint time;
+layout(location = 4) out uint id;
 
 #include "color.glsl"
 
@@ -56,6 +57,7 @@ void main()
     normal = normRad;
     
     time = colTime.z;
+    id = colTime.y;
     
     gl_FragDepth = (corrected_pos.z / (2 * maxDepth)) + 0.5f;
 }
