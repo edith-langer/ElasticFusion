@@ -88,6 +88,8 @@ MainController::MainController(int argc, char * argv[])
     so3 = !(Parse::get().arg(argc, argv, "-nso", empty) > -1);
     end = std::numeric_limits<unsigned short>::max(); //Funny bound, since we predict times in this format really!
 
+    output_filename = logReader->getFile();
+
     Parse::get().arg(argc, argv, "-c", confidence);
     Parse::get().arg(argc, argv, "-d", depth);
     Parse::get().arg(argc, argv, "-i", icp);
@@ -99,6 +101,7 @@ MainController::MainController(int argc, char * argv[])
     Parse::get().arg(argc, argv, "-ic", icpCountThresh);
     Parse::get().arg(argc, argv, "-s", start);
     Parse::get().arg(argc, argv, "-e", end);
+    Parse::get().arg(argc, argv, "-name", output_filename);
 
     logReader->flipColors = Parse::get().arg(argc, argv, "-f", empty) > -1;
 
@@ -208,7 +211,7 @@ void MainController::launch()
                                         fernThresh,
                                         so3,
                                         frameToFrameRGB,
-                                        logReader->getFile());
+                                        output_filename);
         }
         else
         {
@@ -271,6 +274,13 @@ void MainController::run()
                     currentPose = new Eigen::Matrix4f;
                     currentPose->setIdentity();
                     *currentPose = groundTruthOdometry->getTransformation(logReader->timestamp);
+//                    if (currentPose->isIdentity(0.01)) {
+//                        std::cout << "Couldn't find pose for given timestamp" << logReader->timestamp << std::endl;
+//                        continue;
+//                    }
+//                    std::cout << "Timestamp " << logReader->timestamp << std::endl;
+//                    std::cout << "Pose\n" << *currentPose << std::endl;
+
                 }
 
                 eFusion->processFrame(logReader->rgb, logReader->depth, logReader->timestamp, currentPose, weightMultiplier);
@@ -563,4 +573,5 @@ void MainController::run()
 
         TOCK("GUI");
     }
+    eFusion->savePly();
 }

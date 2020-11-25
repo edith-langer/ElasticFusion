@@ -17,6 +17,8 @@
  */
 
 #include "GroundTruthOdometry.h"
+#include <cmath>
+#include <iostream>
 
 GroundTruthOdometry::GroundTruthOdometry(const std::string & filename)
  : last_utime(0)
@@ -37,14 +39,27 @@ void GroundTruthOdometry::loadTrajectory(const std::string & filename)
     while (!file.eof())
     {
         unsigned long long int utime;
+        double time;
         float x, y, z, qx, qy, qz, qw;
         std::getline(file, line);
-        int n = sscanf(line.c_str(), "%llu,%f,%f,%f,%f,%f,%f,%f", &utime, &x, &y, &z, &qx, &qy, &qz, &qw);
-
+        int n = sscanf(line.c_str(), "%lf %f %f %f %f %f %f %f", &time, &x, &y, &z, &qx, &qy, &qz, &qw);
         if(file.eof())
             break;
 
         assert(n == 8);
+
+        char check_type [20];
+        sscanf(line.c_str(), "%s", &check_type);
+        std::string s(check_type);
+
+        if (s.find('.') != std::string::npos) {
+            printf("Multply timestamp");
+            time = time * 1000000;
+        }
+
+        utime = time;
+        printf("%lld %f %f %f %f %f %f %f\n", utime, x, y, z, qx, qy, qz, qw);
+
 
         Eigen::Quaternionf q(qw, qx, qy, qz);
         Eigen::Vector3f t(x, y, z);
@@ -60,12 +75,19 @@ Eigen::Matrix4f GroundTruthOdometry::getTransformation(uint64_t timestamp)
 {
     Eigen::Matrix4f pose = Eigen::Matrix4f::Identity();
 
+    std::cout << timestamp << " " << last_utime << std::endl;
     if(last_utime != 0)
     {
+
+        /*for(std::map<uint64_t, Eigen::Isometry3f, std::less<int>, Eigen::aligned_allocator<std::pair<const uint64_t, Eigen::Isometry3f> >>::iterator it = camera_trajectory.begin(); it != camera_trajectory.end(); ++it) {
+          std::cout << it->first << "\n";
+        }*/
         std::map<uint64_t, Eigen::Isometry3f>::const_iterator it = camera_trajectory.find(last_utime);
+        std::cout << std::distance(camera_trajectory.begin(),camera_trajectory.find(last_utime)) << std::endl;
         if (it == camera_trajectory.end())
         {
             last_utime = timestamp;
+            std::cout << "GT pose " << pose << std::endl;
             return pose;
         }
 
@@ -76,7 +98,9 @@ Eigen::Matrix4f GroundTruthOdometry::getTransformation(uint64_t timestamp)
               0, -1, 0, 0,
               0,  0, 0, 1;
 
-        pose = M.inverse() * camera_trajectory[timestamp] * M;
+        //pose = M.inverse() * camera_trajectory[timestamp] * M;
+        Eigen::Matrix4f I = Eigen::Matrix4f::Identity();
+        pose = camera_trajectory[timestamp] * I;
     }
     else
     {

@@ -719,6 +719,7 @@ void ElasticFusion::savePly()
 {
     std::string filename = saveFilename;
     filename.append(".ply");
+    std::cout << "Output was saved to " << filename << std::endl;
 
     // Open file
     std::ofstream fs;

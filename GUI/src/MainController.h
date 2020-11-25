@@ -49,6 +49,7 @@ class MainController
         bool iclnuim;
         std::string logFile;
         std::string poseFile;
+        std::string output_filename;
 
         float confidence,
               depth,
